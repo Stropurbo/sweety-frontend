@@ -76,7 +76,7 @@ const ReplyItem = ({ reply, currentUser, onDelete }) => {
 			const res = await api.post(`/posts/replies/${reply.id}/like/`)
 			setLikes(res.data.likes_count)
 			setIsLiked(res.data.liked)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleDelete = async () => {
@@ -84,7 +84,7 @@ const ReplyItem = ({ reply, currentUser, onDelete }) => {
 		try {
 			await api.delete(`/posts/replies/${reply.id}/`)
 			onDelete(reply.id)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleEdit = async () => {
@@ -93,7 +93,7 @@ const ReplyItem = ({ reply, currentUser, onDelete }) => {
 			await api.patch(`/posts/replies/${reply.id}/`, { content: editText })
 			setContent(editText)
 			setEditing(false)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	return (
@@ -155,7 +155,7 @@ const CommentItem = ({ comment, currentUser, onDelete }) => {
 			const res = await api.post(`/posts/comments/${comment.id}/like/`)
 			setLikes(res.data.likes_count)
 			setIsLiked(res.data.liked)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleDelete = async () => {
@@ -163,7 +163,7 @@ const CommentItem = ({ comment, currentUser, onDelete }) => {
 		try {
 			await api.delete(`/posts/comments/${comment.id}/`)
 			onDelete(comment.id)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleEdit = async () => {
@@ -172,7 +172,7 @@ const CommentItem = ({ comment, currentUser, onDelete }) => {
 			await api.patch(`/posts/comments/${comment.id}/`, { content: editText })
 			setContent(editText)
 			setEditing(false)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleReply = async () => {
@@ -183,7 +183,7 @@ const CommentItem = ({ comment, currentUser, onDelete }) => {
 			setReplyText('')
 			setShowReplies(true)
 			setShowReplyInput(false)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleReplyClick = () => {
@@ -286,7 +286,7 @@ const CommentSection = ({ postId, initialComments, currentUser, onCommentAdded }
 			setComments(prev => [...prev, res.data])
 			setText('')
 			onCommentAdded?.()
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	return (

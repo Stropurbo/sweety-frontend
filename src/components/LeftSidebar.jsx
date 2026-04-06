@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import useAuth from '../context/useAuth'
 import api from '../api/axios'
 
 const LeftSidebar = ({ posts }) => {
@@ -17,7 +17,7 @@ const LeftSidebar = ({ posts }) => {
 			const map = {}
 			r.data.forEach(e => { map[e.id] = e.is_interested })
 			setInterestedMap(map)
-		}).catch(() => {})
+		}).catch(() => { /* ignore */ })
 	}, [])
 
 	const toggleInterest = async (ev) => {
@@ -32,7 +32,7 @@ const LeftSidebar = ({ posts }) => {
 				setInterestedMap(prev => ({ ...prev, [ev.id]: true }))
 				setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, interest_count: res.data.interest_count } : e))
 			}
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const explore = [

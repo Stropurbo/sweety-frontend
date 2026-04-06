@@ -8,7 +8,7 @@ import CreatePost from '../components/CreatePost'
 import PostCard from '../components/PostCard'
 import FeedSkeleton from '../components/FeedSkeleton'
 import StoryBar from '../components/StoryBar'
-import { useAuth } from '../context/AuthContext'
+import useAuth from '../context/useAuth'
 import usePolling from '../hooks/usePolling'
 import '../styles/feed.css'
 
@@ -52,7 +52,7 @@ const Feed = () => {
 				const newOnes = results.filter(p => !existingIds.has(p.id))
 				return newOnes.length ? [...newOnes, ...prev] : prev
 			})
-		} catch {}
+		} catch { /* ignore */ }
 	}, [])
 	usePolling(pollNewPosts, 3000)
 
@@ -124,7 +124,7 @@ const Feed = () => {
 						)}
 					</section>
 
-					<RightSidebar posts={posts} />
+					<RightSidebar />
 				</div>
 			</main>
 		</div>

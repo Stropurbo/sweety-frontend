@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../api/axios'
-import { useAuth } from '../context/AuthContext'
+import useAuth from '../context/useAuth'
 import Navbar from '../components/Navbar'
 import PostCard from '../components/PostCard'
 import '../styles/profile.css'
@@ -335,13 +335,13 @@ const Profile = () => {
 			.catch(() => navigate('/feed'))
 		api.get(`/friends/list/${id}/`)
 			.then((r) => setFriends(r.data))
-			.catch(() => {})
+			.catch(() => { /* ignore */ })
 		if (currentUser && currentUser.id !== parseInt(id)) {
 			api.get(`/friends/status/${id}/`)
 				.then((r) => setFriendStatus(r.data.status))
-				.catch(() => {})
+				.catch(() => { /* ignore */ })
 		}
-	}, [id, navigate])
+	}, [id, navigate, currentUser])
 
 	useEffect(() => {
 		if (profile) setPosY(profile.cover_position_y ?? 50)
@@ -437,7 +437,7 @@ const Profile = () => {
 			await api.delete(`/friends/unfriend/${id}/`)
 			setFriendStatus('none')
 			setFriends(prev => prev.filter(f => f.id !== parseInt(id)))
-		} catch {}
+		} catch { /* ignore */ }
 		setFriendLoading(false)
 	}
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
-import { useAuth } from '../context/AuthContext'
+import useAuth from '../context/useAuth'
 import usePolling from '../hooks/usePolling'
 
 const FriendItem = ({ f, onUnfriend, navigate }) => {
@@ -24,7 +24,7 @@ const FriendItem = ({ f, onUnfriend, navigate }) => {
 		try {
 			await api.delete(`/friends/unfriend/${f.id}/`)
 			onUnfriend(f.id)
-		} catch {}
+		} catch { /* ignore */ }
 		setLoading(false)
 		setOpen(false)
 	}
@@ -150,7 +150,7 @@ const FriendItem = ({ f, onUnfriend, navigate }) => {
 	)
 }
 
-const RightSidebar = ({ posts }) => {
+const RightSidebar = () => {
 	const { user: currentUser } = useAuth()
 	const navigate = useNavigate()
 	const [suggested, setSuggested] = useState([])
@@ -159,14 +159,14 @@ const RightSidebar = ({ posts }) => {
 	const fetchSuggested = useCallback(() => {
 		api.get('/auth/suggested/')
 			.then((res) => setSuggested(res.data))
-			.catch(() => {})
+			.catch(() => { /* ignore */ })
 	}, [])
 
 	const fetchFriends = useCallback(() => {
 		if (!currentUser) return
 		api.get(`/friends/list/${currentUser.id}/`)
 			.then((res) => setFriends(res.data))
-			.catch(() => {})
+			.catch(() => { /* ignore */ })
 	}, [currentUser])
 
 	useEffect(() => {

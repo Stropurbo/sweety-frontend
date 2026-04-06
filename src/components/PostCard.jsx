@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axios'
 import CommentSection from './CommentSection'
-import { useAuth } from '../context/AuthContext'
 
 // ── Friend Hover Card ──
 const FriendHoverCard = ({ author, currentUser }) => {
@@ -14,7 +13,7 @@ const FriendHoverCard = ({ author, currentUser }) => {
 		if (!currentUser || currentUser.id === author.id) return
 		api.get(`/friends/status/${author.id}/`)
 			.then((r) => setFStatus(r.data.status))
-			.catch(() => {})
+			.catch(() => { /* ignore */ })
 	}, [author.id, currentUser])
 
 	const handleAction = async () => {
@@ -466,7 +465,6 @@ const REACTIONS = [
 
 const PostCard = ({ post, onDelete, currentUser }) => {
 	const [likes, setLikes] = useState(post.likes_count)
-	const [isLiked, setIsLiked] = useState(post.is_liked)
 	const [myReaction, setMyReaction] = useState(post.my_reaction || null)
 	const [reactionSummary, setReactionSummary] = useState(post.reaction_summary || {})
 	const [showReactionPicker, setShowReactionPicker] = useState(false)
@@ -474,7 +472,7 @@ const PostCard = ({ post, onDelete, currentUser }) => {
 	const reactionBtnRef = useRef(null)
 	const [isInterested, setIsInterested] = useState(post.is_interested || false)
 	const [interestCount, setInterestCount] = useState(post.interest_count || 0)
-	const [likedBy, setLikedBy] = useState(post.liked_by)
+	const [likedBy] = useState(post.liked_by)
 	const [showComments, setShowComments] = useState(false)
 	const [showLikedBy, setShowLikedBy] = useState(false)
 	const [commentCount, setCommentCount] = useState(post.comments.length)
@@ -532,7 +530,7 @@ const PostCard = ({ post, onDelete, currentUser }) => {
 				}
 				return n
 			})
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleShare = () => {
@@ -547,7 +545,7 @@ const PostCard = ({ post, onDelete, currentUser }) => {
 		try {
 			await api.delete(`/posts/${post.id}/`)
 			onDelete(post.id)
-		} catch {}
+		} catch { /* ignore */ }
 	}
 
 	const handleToggleVisibility = async () => {
@@ -993,7 +991,7 @@ const PostCard = ({ post, onDelete, currentUser }) => {
 														setIsInterested(true)
 														setInterestCount(res.data.interest_count)
 													}
-												} catch {}
+												} catch { /* ignore */ }
 											}}
 										>
 											{isInterested ? '✓ Interested' : 'Interested?'}
