@@ -29,6 +29,11 @@ const Navbar = () => {
 	const [activeTab, setActiveTab] = useState('all')
 	const [notifications, setNotifications] = useState([])
 	const [unreadCount, setUnreadCount] = useState(0)
+	const [searchQuery, setSearchQuery] = useState('')
+	const [searchResults, setSearchResults] = useState([])
+	const [searchLoading, setSearchLoading] = useState(false)
+	const [showSearchDrop, setShowSearchDrop] = useState(false)
+	const searchTimeout = useRef(null)
 	const initials = user ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase() : ''
 
 	const notifRef = useRef(null)
@@ -49,6 +54,21 @@ const Navbar = () => {
 		const interval = setInterval(fetchNotifs, 30000)
 		return () => clearInterval(interval)
 	}, [user])
+
+	const handleSearch = (q) => {
+		setSearchQuery(q)
+		clearTimeout(searchTimeout.current)
+		if (!q.trim()) { setSearchResults([]); setShowSearchDrop(false); return }
+		setShowSearchDrop(true)
+		setSearchLoading(true)
+		searchTimeout.current = setTimeout(async () => {
+			try {
+				const res = await api.get(`/auth/search/?q=${encodeURIComponent(q)}`)
+				setSearchResults(res.data)
+			} catch {}
+			setSearchLoading(false)
+		}, 400)
+	}
 
 	const handleMarkAllRead = async () => {
 		await api.post('/notifications/read/')
@@ -87,30 +107,41 @@ const Navbar = () => {
 						<span className="topbar-name">Sweety</span>
 					</Link>
 
-					{/* searchbar */}
-					<div className="topbar-search">
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 17 17"
-							fill="none"
-						>
-							<circle
-								cx="7"
-								cy="7"
-								r="6"
-								stroke="#999"
-							/>
-							<path
-								stroke="#999"
-								strokeLinecap="round"
-								d="M16 16l-3-3"
-							/>
+	{/* searchbar */}
+					<div className="topbar-search" style={{ position: 'relative' }}>
+						<svg width="16" height="16" viewBox="0 0 17 17" fill="none">
+							<circle cx="7" cy="7" r="6" stroke="#999" />
+							<path stroke="#999" strokeLinecap="round" d="M16 16l-3-3" />
 						</svg>
 						<input
 							type="text"
-							placeholder="Search..."
+							placeholder="Search people..."
+							value={searchQuery}
+							onChange={e => handleSearch(e.target.value)}
+							onFocus={() => searchQuery && setShowSearchDrop(true)}
+							onBlur={() => setTimeout(() => setShowSearchDrop(false), 200)}
 						/>
+						{showSearchDrop && (
+							<div className="search-dropdown">
+								{searchLoading ? (
+									<div className="search-loading">Searching...</div>
+								) : searchResults.length === 0 ? (
+									<div className="search-empty">No users found</div>
+								) : (
+									searchResults.map(u => (
+										<div key={u.id} className="search-item" onMouseDown={() => { navigate(`/profile/${u.id}`); setSearchQuery(''); setShowSearchDrop(false) }}>
+											<div className="search-avatar">
+												{u.avatar ? <img src={u.avatar} alt="" /> : <span>{u.first_name[0]}{u.last_name[0]}</span>}
+											</div>
+											<div className="search-info">
+												<strong>{u.first_name} {u.last_name}</strong>
+												<span>{u.email}</span>
+											</div>
+										</div>
+									))
+								)}
+							</div>
+						)}
 					</div>
 				</div>
 
@@ -143,7 +174,7 @@ const Navbar = () => {
 
 					{/* friends frind */}
 					<a
-						href="#"
+						href="find-friends"
 						className="nav-icon"
 						title="Friends"
 					>
